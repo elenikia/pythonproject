@@ -381,5 +381,21 @@ print ("The percentage of people who have kids with more than one partner is ", 
 
 #---------------------------
 
+# question 12:
+for i in range(len(CPRlist)):
+	
+	lastdigit = CPRlist[i][-1]                                               
+
+	if int(lastdigit)%2 == 0:                                                 
+		summed_w_height += int(maindict[CPRlist[i]]['Height'])                 # calculate the summary of womens' heights 
+		
+	else:
+		males+=1
+		summed_m_height += int(maindict[CPRlist[i]]['Height'])                 # calculate the summary of mens' heights 
+		            
+
+
+avr_w_height = summed_w_height / females
+avr_m_height = summed_m_height / males
 
 
