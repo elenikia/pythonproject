@@ -402,9 +402,13 @@ sncouples = 0
 tscouples = 0 
 tncouples = 0 
 
+
+tallparents = []
+
 for y in range (len(uniqueparentspairs)):
 	if int(maindict[uniqueparentspairs[y][0]]['Height']) > (avr_w_height + avr_w_height*0.025) and int(maindict[uniqueparentspairs[y][1]]['Height']) > (avr_m_height + avr_m_height*0.025):
 		ttcouples+=1
+		tallparents.append(uniqueparentspairs[y])                              #store CPRs of tall parent pairs for q13
 	elif int(maindict[uniqueparentspairs[y][0]]['Height']) < (avr_w_height - avr_w_height*0.025) and int(maindict[uniqueparentspairs[y][1]]['Height']) < (avr_m_height - avr_m_height*0.025):
 		sscouples+=1
 	elif int(maindict[uniqueparentspairs[y][0]]['Height']) <= (avr_w_height + avr_w_height*0.025) and int(maindict[uniqueparentspairs[y][0]]['Height']) >= (avr_w_height - avr_w_height*0.025) and int(maindict[uniqueparentspairs[y][1]]['Height']) <= (avr_m_height + avr_m_height*0.025) and int(maindict[uniqueparentspairs[y][1]]['Height']) >= (avr_m_height - avr_m_height*0.025):
@@ -421,5 +425,28 @@ print('Question 12')
 print('The percentage of couples consisting of two tall people is', ttcouples/len(uniqueparentspairs), '%, out of all couples. Tall people have children with other tall people in a percentage of', (ttcouples/(ttcouples+tscouples+tncouples))*100, '%.')
 
 #---------------------------
+
+# question 13:
+
+kidsoftallparents = 0
+tallkids = 0
+
+
+dict_items=childict.items()
+for j in range (len(tallparents)):
+	for key,value in dict_items:
+		if value == tallparents[j]:
+			kidsoftallparents +=1 
+			kid = key
+			if int(kid[-1]) % 2 == 0 and int(maindict[kid]['Height']) > (avr_w_height + avr_w_height*0.025):
+				tallkids+=1
+			elif int(kid[-1]) % 2 != 0 and int(maindict[kid]['Height']) > (avr_m_height + avr_m_height*0.025):
+				tallkids+=1
+
+print('Question 13')
+print ('The percentage of kids of tall parents that are tall is', (tallkids/kidsoftallparents)*100, '%.')
+
+#---------------------------
+
 
 
