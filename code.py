@@ -352,8 +352,34 @@ for t in range(len(motherlist)):                             # iterating over al
 
 
 print('Question 10')
-print ('The likelihood of the fistborn being a female is', (girls/(girls+boys))*100, '%') 
+print ('The likelihood of the fistborn being a female is', (girls/(girls+boys))*100, '%', '\n') 
 		
 #---------------------------
+
+
+# question 11:
+multiplepartners = 0                                         # initialize
+parents = list(childict.values())                            # store all pairs of parents in a list
+parents.sort()                                               # sort list (pairs with the same father will be next to each other)
+for p in range (len(parents)):
+	if p != len(parents)-1:
+		if parents[p][0] == parents[p+1][0] and parents[p][1]!= parents[p+1][1]:
+			
+	
+
+			multiplepartners += 1                            # count men with multiple partners
+	
+	(parents[p]).reverse()		                             # reverse the order of parents (first element: mother, second element: father)
+
+	if p != len(parents)-1:
+		if parents[p][0] == parents[p+1][0] and parents[p][1]!= parents[p+1][1]:
+
+			multiplepartners += 1                            # count women with multiple partners
+
+print('Question 11')
+print ("The percentage of people who have kids with more than one partner is ", (multiplepartners / (2*len(parents)))*100, '%', '\n')
+
+#---------------------------
+
 
 
