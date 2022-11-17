@@ -139,6 +139,7 @@ for i in range(len(CPRlist)):
 
 	if int(lastdigit)%2 == 0:                                                  # count males and females
 		females +=1
+		summed_w_height += int(maindict[CPRlist[i]]['Height'])                 # calculate the summary of womens' heights for q12
 		
 		if maindict[CPRlist[i]]['Children'] is not None:                       # check for each woman, if she is a mother
 			mothers[CPRlist[i]]= maindict[CPRlist[i]]['Children']              # store mothers and their children in dict (mothers: keys:mothers, values: children)
@@ -147,7 +148,8 @@ for i in range(len(CPRlist)):
 
 	else:
 		males+=1
-		
+		summed_m_height += int(maindict[CPRlist[i]]['Height'])                 # calculate the summary of mens' heights for q12
+		            
 		if maindict[CPRlist[i]]['Children'] is not None:                       # check for each man, if he is a father
 			fathers[CPRlist[i]]= maindict[CPRlist[i]]['Children']              # store fathers and their children in dict (fathers: keys:fathers, values: children)
 		else:
@@ -210,6 +212,8 @@ for i in range(len(ChildCPR_sortlist)):
 			father = childict[ChildCPR_sortlist[i]][0]
 			mother = childict[ChildCPR_sortlist[i]][1]
 			parent_agediff.append(abs(maindict[father]['Age'] - maindict[mother]['Age']))
+			uniqueparentspairs.append(childict[ChildCPR_sortlist[i]])                           # make a list of unique pairs of parents for q12
+		
 
 		elif childict[ChildCPR_sortlist[i]] == childict[ChildCPR_sortlist[i+1]] and i == len(ChildCPR_sortlist)-2:
 			mother = childict[ChildCPR_sortlist[i]][1]
@@ -220,6 +224,8 @@ for i in range(len(ChildCPR_sortlist)):
 		mother = childict[ChildCPR_sortlist[i]][1]
 		father = childict[ChildCPR_sortlist[i]][0]
 		parent_agediff.append(abs(maindict[father]['Age'] - maindict[mother]['Age']))
+		uniqueparentspairs.append(childict[ChildCPR_sortlist[i]])                                 # make a list of unique pairs of parents for q12
+		
 print('Question 7----------')
 print ('Average age difference between parents: ',averagefunc(parent_agediff))	
 print('---------------')
@@ -381,21 +387,37 @@ print ("The percentage of people who have kids with more than one partner is ", 
 
 #---------------------------
 
+
 # question 12:
-for i in range(len(CPRlist)):
 	
-	lastdigit = CPRlist[i][-1]                                               
-
-	if int(lastdigit)%2 == 0:                                                 
-		summed_w_height += int(maindict[CPRlist[i]]['Height'])                 # calculate the summary of womens' heights 
-		
-	else:
-		males+=1
-		summed_m_height += int(maindict[CPRlist[i]]['Height'])                 # calculate the summary of mens' heights 
-		            
-
-
 avr_w_height = summed_w_height / females
 avr_m_height = summed_m_height / males
+
+ttcouples = 0
+sscouples = 0
+nncouples = 0
+sncouples = 0
+tscouples = 0 
+tncouples = 0 
+
+for y in range (len(uniqueparentspairs)):
+	if int(maindict[uniqueparentspairs[y][0]]['Height']) > (avr_w_height + avr_w_height*0.025) and int(maindict[uniqueparentspairs[y][1]]['Height']) > (avr_m_height + avr_m_height*0.025):
+		ttcouples+=1
+	elif int(maindict[uniqueparentspairs[y][0]]['Height']) < (avr_w_height - avr_w_height*0.025) and int(maindict[uniqueparentspairs[y][1]]['Height']) < (avr_m_height - avr_m_height*0.025):
+		sscouples+=1
+	elif int(maindict[uniqueparentspairs[y][0]]['Height']) <= (avr_w_height + avr_w_height*0.025) and int(maindict[uniqueparentspairs[y][0]]['Height']) >= (avr_w_height - avr_w_height*0.025) and int(maindict[uniqueparentspairs[y][1]]['Height']) <= (avr_m_height + avr_m_height*0.025) and int(maindict[uniqueparentspairs[y][1]]['Height']) >= (avr_m_height - avr_m_height*0.025):
+		nncouples+=1
+	elif (int(maindict[uniqueparentspairs[y][0]]['Height']) > (avr_w_height + avr_w_height*0.025) and int(maindict[uniqueparentspairs[y][1]]['Height']) < (avr_m_height - avr_m_height*0.025)) or (int(maindict[uniqueparentspairs[y][0]]['Height']) < (avr_w_height - avr_w_height*0.025) and int(maindict[uniqueparentspairs[y][1]]['Height']) > (avr_m_height + avr_m_height*0.025)):
+		tscouples+=1
+	elif (int(maindict[uniqueparentspairs[y][0]]['Height']) <= (avr_w_height + avr_w_height*0.025) and int(maindict[uniqueparentspairs[y][0]]['Height']) >= (avr_w_height - avr_w_height*0.025) and int(maindict[uniqueparentspairs[y][1]]['Height']) > (avr_m_height + avr_m_height*0.025)) or (int(maindict[uniqueparentspairs[y][1]]['Height']) <= (avr_m_height + avr_m_height*0.025) and int(maindict[uniqueparentspairs[y][1]]['Height']) >= (avr_m_height - avr_m_height*0.025) and int(maindict[uniqueparentspairs[y][0]]['Height']) > (avr_w_height + avr_w_height*0.025)):
+		tncouples+=1
+	elif (int(maindict[uniqueparentspairs[y][0]]['Height']) <= (avr_w_height + avr_w_height*0.025) and int(maindict[uniqueparentspairs[y][0]]['Height']) >= (avr_w_height - avr_w_height*0.025) and int(maindict[uniqueparentspairs[y][1]]['Height']) < (avr_m_height - avr_m_height*0.025)) or (int(maindict[uniqueparentspairs[y][1]]['Height']) <= (avr_m_height + avr_m_height*0.025) and int(maindict[uniqueparentspairs[y][1]]['Height']) >= (avr_m_height - avr_m_height*0.025) and int(maindict[uniqueparentspairs[y][0]]['Height']) < (avr_w_height - avr_w_height*0.025)):
+		sncouples+=1
+
+
+print('Question 12')
+print('The percentage of couples consisting of two tall people is', ttcouples/len(uniqueparentspairs), '%, out of all couples. Tall people have children with other tall people in a percentage of', (ttcouples/(ttcouples+tscouples+tncouples))*100, '%.')
+
+#---------------------------
 
 
