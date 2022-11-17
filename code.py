@@ -130,7 +130,8 @@ nc_women = 0
 
  
 CPRlist = list(maindict.keys())                                                # store all CPRs in a list (CPRlist)              
-
+summed_w_height =0
+summed_m_height=0
 
 
 for i in range(len(CPRlist)):
@@ -205,6 +206,7 @@ for i in range(len(fatherlist)):
 ChildCPR_sortlist = sorted(childict.keys(), key=childict.get)                  
 kids_age = list()
 parent_agediff = list()
+uniqueparentspairs= list()
 
 for i in range(len(ChildCPR_sortlist)):                                     
 	if i != len(ChildCPR_sortlist)-1:
