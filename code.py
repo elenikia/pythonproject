@@ -3,22 +3,9 @@
 
 import re
 
-(result,lastdigit, females, males, ages, counts, groups, agerangedict,agegrangeperc, genderdict) = (None, "", 0,0, [], [], [], dict(),dict(),dict())
+maindict = dict()                                                                    # initialize main data structure
 
-(seqflag, datalist) = (False, [])                                                  # Initialize
-
-datalistclear = []
-childrenCPRlist = []
-father1timelist = []
-mother1timelist = []
-people = 0
-parents = 0
-
-age_dict= dict()
-parent_child_dict=dict()
-maindict = dict()
-
-infile = open('people.db', "r")                                                   # open input file
+infile = open('people.db', "r")                                                      # open input file
 flag = False
 flag2 = False
 for line in infile: 
@@ -134,6 +121,8 @@ nc_women = 0
 CPRlist = list(maindict.keys())                                                # store all CPRs in a list (CPRlist)              
 summed_w_height =0
 summed_m_height=0
+lastdigit = ''
+(females, males) = (0,0)
 
 
 for i in range(len(CPRlist)):
