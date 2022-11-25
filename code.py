@@ -623,7 +623,7 @@ for i in range(len(fatherlist)):                             # iterate through a
 			elif fathersblood == 'A-' and (childsblood == 'AB-' or childsblood == 'A+'):
 				f_cbloodlist.append(fathers_children[j]+' '+childsblood)
 
-	if f_cbloodlist != []:                                                                  # exclude cases where sons cannot receive blood form father
+	if f_cbloodlist != []:                                                                  # exclude cases where sons cannot receive blood from father
 		f_cbloodict[fatherlist[i]+' '+fathersblood] = f_cbloodlist                      # create f_cbloodict
 
 print('Question 16')
@@ -634,24 +634,29 @@ sonscounter = 0                                                                 
 
 for i in range(len(f_cbloodkeylist)):
 	sons = f_cbloodict[f_cbloodkeylist[i]]
-	sonscounter += len(sons)                                                              # calculate sum of compatible sons
+	sonscounter += len(sons)                                                              # calculate number of compatible sons
 print('Sons that can receive blood from their father: ', sonscounter, '\n')
 
 #---------------------
 
 
 #question17
-gc_gpbloodict = dict()                                   #dict for grankids who grantparent
-grandkids_list = list(grandkids.keys())
+gc_gpbloodict = dict()                                   # dict for grankids who can donate to grandparent
+grandkids_list = list(grandkids.keys())                  # list of all grandkids
 
-for i in range(len(grandkids_list)):
+for i in range(len(grandkids_list)):                          
 	grandkidblood = maindict[grandkids_list[i]]['Bloodtype']
 	grandparents = grandkids[grandkids_list[i]]
-	gc_gpbloodlist = []
-	for j in range(len(grandparents)):
+	
+	gc_gpbloodlist = []                                                    # list of grandparents who can receive blood
+	
+	for j in range(len(grandparents)):      
 		
-		grandparentblood = maindict[grandparents[j]]['Bloodtype']
+		
+		grandparentblood = maindict[grandparents[j]]['Bloodtype']      # store grandparent's bloodtype into variable
 
+		
+		#If statements to detect sons that can receive blood from their father and append themselves and their bloodtype into f_cbloodlist :
 		if grandkidblood == grandparentblood:
 			gc_gpbloodlist.append(grandparents[j]+' '+grandparentblood)
 
@@ -670,15 +675,21 @@ for i in range(len(grandkids_list)):
 		elif grandkidblood == 'A-' and (grandkidblood == 'AB-' or grandkidblood == 'A+'):
 			gc_gpbloodlist.append(grandparents[j]+' '+grandparentblood)
 
-	if gc_gpbloodlist != []:
-		gc_gpbloodict[grandkids_list[i]+' '+grandkidblood] = gc_gpbloodlist
-print('Question 17')
+	
+	if gc_gpbloodlist != []:                                           # exclude cases where grandparents cannot receive blood form sons     
+		
+		gc_gpbloodict[grandkids_list[i]+' '+grandkidblood] = gc_gpbloodlist   # create gc_gpbloodict
+
+		
+		print('Question 17')
 print('The number of grandkids that can donate blood to atleast one grandparent',len(gc_gpbloodict.keys()))
+
 gc_gplist = list(gc_gpbloodict.keys())
-gp_counter = 0
-for i in range(len(gc_gplist)):
-	grandparents = gc_gpbloodict[gc_gplist[i]]
-	gp_counter += len(grandparents)
+gp_counter = 0                                      # initialize  counter for granparents that can receive blood
+
+for i in range(len(gc_gplist)):                
+	grandparents = gc_gpbloodict[gc_gplist[i]]  # store allcompatible grandparents into the existing 'grandparent' variable 
+	gp_counter += len(grandparents)             # calculate number of compatible grandparents
 
 print('The number of grandparents that can recieve blood from their grandkids is: ',gp_counter)
 
