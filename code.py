@@ -3,19 +3,7 @@
 
 import re
 
-(result,lastdigit, females, males, ages, counts, groups, agerangedict,agegrangeperc, genderdict) = (None, "", 0,0, [], [], [], dict(),dict(),dict())
 
-(seqflag, datalist) = (False, [])                                                  # Initialize
-
-datalistclear = []
-childrenCPRlist = []
-father1timelist = []
-mother1timelist = []
-people = 0
-parents = 0
-
-age_dict= dict()
-parent_child_dict=dict()
 maindict = dict()
 
 infile = open('people.db', "r")                                                   # open input file
@@ -240,11 +228,11 @@ for i in range(len(motherlist)):					#iterating through all mothers
 	kidlist =[]
 	kids_age =[]
 	kidlist = mothers[motherlist[i]]				#storing each mothers children in temporary list
-	for j in range(len(kidlist)):					#
-		Ag_e = maindict[kidlist[j]]['Age']
-		kids_age.append(Ag_e)
-	kids_age.sort()
-	firstmotherlist.append(maindict[motherlist[i]]['Age'] - kids_age[-1])
+	for j in range(len(kidlist)):					#iterating through the children every mother has
+		Ag_e = maindict[kidlist[j]]['Age']			#finding out the age of each child
+		kids_age.append(Ag_e)					#appendng the age to another list 
+	kids_age.sort()							
+	firstmotherlist.append(maindict[motherlist[i]]['Age'] - kids_age[-1])	#calculating the age the mother became a mother for the first time
 print('Question 4 and 5')
 print(dividetogroups(firstmotherlist))
 print ('Average age at which a person became a mother for the first time: ',averagefunc(firstmotherlist))
@@ -256,16 +244,16 @@ print('   ')
 #--------------
 
 #Question2 & 3
-fatherlist = list(fathers.keys())
-for i in range(len(fatherlist)):
+fatherlist = list(fathers.keys())										#creating a list of all fathers
+for i in range(len(fatherlist)):										#iterating through the list of all fathers
 	kidlist =[]
 	kids_age =[]
-	kidlist = fathers[fatherlist[i]]
-	for j in range(len(kidlist)):
+	kidlist = fathers[fatherlist[i]]									#adding all the children to one list
+	for j in range(len(kidlist)):										#iterating through all children
 		Ag_e = maindict[kidlist[j]]['Age']
-		kids_age.append(Ag_e)
+		kids_age.append(Ag_e)										#adding the age of every kid to a new list
 	kids_age.sort()
-	firstfatherlist.append(maindict[fatherlist[i]]['Age'] - kids_age[-1])
+	firstfatherlist.append(maindict[fatherlist[i]]['Age'] - kids_age[-1])					#finding when the father became a father for the first time and adding it to a list
 print('Question 2 and 3')
 print(dividetogroups(firstfatherlist))
 print ('Average age at which a person became a father for the first time: ',averagefunc(firstfatherlist))
