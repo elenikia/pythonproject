@@ -3,23 +3,25 @@
 
 import re
 
+maindict = dict()                                                                   # initialize main data structure
 
-maindict = dict()
-
-infile = open('people.db', "r")                                                   # open input file
+infile = open('people.db', "r")                                                     # open input file
 flag = False
 flag2 = False
 for line in infile: 
-	REresult1 = re.search(r'CPR:\s+(\d+(\d{2})\-\d+)\s*',line)                    # regex to isolate CPR
+	REresult1 = re.search(r'CPR:\s+(\d+(\d{2})\-\d+)\s*',line)                  # regex to isolate CPR
 	if REresult1 is not None:
 		if flag == True:
 
-			maindict[CPR] = {'Age': age,'Firstname':firstname,                    # Store all the data collected from the Regex above and bellow in a dict (maindict: keys: CPR of each entry, values: rest of data of the entry in key-value pairs)
+# Store all the data collected from the Regex above and bellow in a dict (maindict: keys: CPR of each entry, values: rest of data of the entry in key-value pairs)
+			
+			maindict[CPR] = {'Age': age,'Firstname':firstname,      
 			'Lastname':lastname, 'Height':height, 'Weight': weight, 
 			'Eyecolor':eyecolor, 'Bloodtype':bloodtype, 'Children':children, 'BMI':(int(weight)/((int(height)*int(height)))*10000)}
 
-		CPR = REresult1.group(1)
-		age = 100 - int(REresult1.group(2))
+		
+		CPR = REresult1.group(1)                                            # isolate 5th and 6th digit of CPR
+		age = 100 - int(REresult1.group(2))                                 # calculate the person's age
 		flag = True
 
 	REresult2 = re.search(r'First name:\s+(\S+)\s*',line)                        # regex to isolate first name
@@ -43,7 +45,7 @@ for line in infile:
 		eyecolor = REresult6.group(1)
 
 	if flag2 == True:
-		REresult8 = re.search(r'Children:(.+)',line)                             # regex to isolate children
+		REresult8 = re.search(r'Children:(.+)',line)                         # regex to isolate children, if they exist
 		if REresult8 is not None:
 			children = REresult8.group(1).split()
 		else:
@@ -52,15 +54,18 @@ for line in infile:
 	REresult7 = re.search(r'^\s*Blood type:\s+(\S+)\s*',line)                    # regex to isolate blood type
 	if REresult7 is not None:
 		bloodtype = REresult7.group(1)
-		flag2 = True                                                             # flag turns true to collect children-if they exist
+		flag2 = True                                                         # flag turns true to collect children-if they exist
 
 maindict[CPR] = {'Age': age,'Firstname':firstname, 'Lastname':lastname, 
-'Height':height, 'Weight': weight, 'Eyecolor':eyecolor, 'Bloodtype':bloodtype,   # repeat the command that creates main dict to include the last entry of the input file
+'Height':height, 'Weight': weight, 'Eyecolor':eyecolor, 'Bloodtype':bloodtype,       # repeat the command that creates main dict to include the last entry of the input file
 'Children':children, 'BMI':(int(weight)/((int(height)*int(height)))*10000)}
 
 
 
-def dividetogroups(alist):                                                       # function that takes a list and divides its elements into smaller groups
+
+# Function that takes a list and divides its elements into smaller groups:
+
+def dividetogroups(alist):                                                           
 	minage = str(alist[0])[0]
 	maxage = str(alist[-1])[0]
 	counts = []
@@ -92,21 +97,25 @@ def dividetogroups(alist):                                                      
 
 	for i in range (len(counts)):                                               # store results in dict
 		string = str(groups[i])+'-'+str(groups[i+1])
-		agerangedict[string] = counts[i]                                        # display results as normal numbers
+		agerangedict[string] = counts[i]                                    # display results as normal numbers
 					
 		string = str(groups[i])+'-'+str(groups[i+1])
-		agegrangeperc[string] = str(counts[i]*100/len(alist))+'%'               # display results as percentages
+		agegrangeperc[string] = str(counts[i]*100/len(alist))+'%'           # display results as percentages
 
 	return (agegrangeperc)
 
 
-def averagefunc(alist):                                                        # function that takes a list and calculates its elements' mean
+
+
+# Function that takes a list and calculates the mean of its elements:
+
+def averagefunc(alist):                                                       
 	
-	sumlist = 0
+	sumlist = 0                                                            # initialize local variable
 	
-	for i in range(len(alist)):
-		sumlist+= int(alist[i])
-	average = sumlist/len(alist)
+	for i in range(len(alist)):                                            # iterate over the list
+		sumlist+= int(alist[i])                                        # add every element of the list
+	average = sumlist/len(alist)                                           # divide summary by the number of elements of list
 
 	return average
 
@@ -120,7 +129,8 @@ nc_women = 0
 
  
 CPRlist = list(maindict.keys())                                                # store all CPRs in a list (CPRlist)              
-summed_w_height =0
+
+summed_w_height =0                                                             # initialize variables that will be used for questions 12, 13
 summed_m_height=0
 
 
@@ -130,21 +140,21 @@ for i in range(len(CPRlist)):
 
 	if int(lastdigit)%2 == 0:                                                  # count males and females
 		females +=1
-		summed_w_height += int(maindict[CPRlist[i]]['Height'])                 # calculate the summary of womens' heights for q12
+		summed_w_height += int(maindict[CPRlist[i]]['Height'])             # calculate the summary of womens' heights for q12
 		
-		if maindict[CPRlist[i]]['Children'] is not None:                       # check for each woman, if she is a mother
-			mothers[CPRlist[i]]= maindict[CPRlist[i]]['Children']              # store mothers and their children in dict (mothers: keys:mothers, values: children)
+		if maindict[CPRlist[i]]['Children'] is not None:                   # check for each woman, if she is a mother
+			mothers[CPRlist[i]]= maindict[CPRlist[i]]['Children']      # store mothers and their children in dict (mothers: keys:mothers, values: children)
 		else:
-			nc_women += 1                                                      # count women without children
+			nc_women += 1                                              # count women without children
 
 	else:
 		males+=1
-		summed_m_height += int(maindict[CPRlist[i]]['Height'])                 # calculate the summary of mens' heights for q12
+		summed_m_height += int(maindict[CPRlist[i]]['Height'])             # calculate the summary of mens' heights for q12
 		            
-		if maindict[CPRlist[i]]['Children'] is not None:                       # check for each man, if he is a father
-			fathers[CPRlist[i]]= maindict[CPRlist[i]]['Children']              # store fathers and their children in dict (fathers: keys:fathers, values: children)
+		if maindict[CPRlist[i]]['Children'] is not None:                   # check for each man, if he is a father
+			fathers[CPRlist[i]]= maindict[CPRlist[i]]['Children']      # store fathers and their children in dict (fathers: keys:fathers, values: children)
 		else:
-			nc_men += 1                                                        # count men without children
+			nc_men += 1                                                # count men without children
 
 
 	agelist.append(maindict[CPRlist[i]]['Age'])
@@ -176,8 +186,9 @@ kids_age = list()
 kidlist = list()
 firstfatherlist = list()
 childict = dict()
-motherlist = list(mothers.keys())
-fatherlist = list(fathers.keys())
+
+motherlist = list(mothers.keys())         #creating a list of all mothers
+fatherlist = list(fathers.keys())         #creating a list of all fathers
 
 
 for i in range(len(fatherlist)):          #iterating through CPR numbers of all fathers                                   
@@ -193,7 +204,7 @@ for i in range(len(fatherlist)):          #iterating through CPR numbers of all 
 
 
 #question7------
-ChildCPR_sortlist = sorted(childict.keys(), key=childict.get)                 # storing all children from childrens dict into a list based on sorted values 
+ChildCPR_sortlist = sorted(childict.keys(), key=childict.get)                # storing all children from childrens dict into a list based on sorted values 
 kids_age = list()
 parent_agediff = list()
 uniqueparentspairs= list()
@@ -211,7 +222,7 @@ for i in range(len(ChildCPR_sortlist)):                                      # i
 		mother = childict[ChildCPR_sortlist[i]][1]
 		father = childict[ChildCPR_sortlist[i]][0]
 		parent_agediff.append(abs(maindict[father]['Age'] - maindict[mother]['Age']))
-		uniqueparentspairs.append(childict[ChildCPR_sortlist[i]])                                 # make a list of unique pairs of parents for q12
+		uniqueparentspairs.append(childict[ChildCPR_sortlist[i]])                                 # make a list of unique pairs of parents for question 12
 		
 print('Question 7----------')
 print ('Average age difference between parents: ',averagefunc(parent_agediff))	
@@ -219,41 +230,61 @@ print('---------------')
 print('   ')
 #--------------
 
-#Question 4 & 5
-motherlist = list(mothers.keys())					#creating a list of all mothers
-kids_age = list()							
-kidlist = list()
+
+#Question 4 & 5 & 10
+
+motherlist = list(mothers.keys())
 firstmotherlist = list()
-for i in range(len(motherlist)):					#iterating through all mothers
-	kidlist =[]
-	kids_age =[]
-	kidlist = mothers[motherlist[i]]				#storing each mothers children in temporary list
-	for j in range(len(kidlist)):					#iterating through the children every mother has
-		Ag_e = maindict[kidlist[j]]['Age']			#finding out the age of each child
-		kids_age.append(Ag_e)					#appendng the age to another list 
-	kids_age.sort()							
-	firstmotherlist.append(maindict[motherlist[i]]['Age'] - kids_age[-1])	#calculating the age the mother became a mother for the first time
-print('Question 4 and 5')
-print(dividetogroups(firstmotherlist))
-print ('Average age at which a person became a mother for the first time: ',averagefunc(firstmotherlist))
-firstmotherlist.sort()
+firstborngirls = 0
+firstbornboys = 0
+
+for i in range(len(motherlist)):                  #iterating through all mothers
+	
+	kidlist =[]                               # initializing kidlist for each mother
+	kidsagedict = dict()                      # initializing kids_age for each mother
+	eldest_kids = []                          # initializing list for each mothers' eldest kids (q10)
+	kidlist = mothers[motherlist[i]]          #storing each mothers children in temporary list
+	keysSortedbyAge = []
+
+	for j in range(len(kidlist)):                                                #iterating through the children every mother has
+		kidsagedict[kidlist[j]] = (maindict[kidlist[j]]['Age'])              #store the age of each child in dict
+		keysSortedbyAge = sorted(kidsagedict.keys(), key= kidsagedict.get)   #sort the keys of dict, along with values so that last key will be the firstborn
+		
+		firstmotherlist.append(maindict[motherlist[i]]['Age'] - int(kidsagedict[keysSortedbyAge[-1]]))   #append the age of the first time mother to a list
+
+	for n in range(len(keysSortedbyAge)):
+		if kidsagedict[keysSortedbyAge[n]] == kidsagedict[keysSortedbyAge[-1]]:      # check if there are twins as firstborn
+			eldest_kids.append(keysSortedbyAge[n])                               # append firstborn kid / kids to list
+	
+	for k in range(len(eldest_kids)):
+		
+		if int(eldest_kids[k][-1])%2 == 0:                    # identify if the first born is male or female
+			firstborngirls+=1                             # count males
+		else: 
+			firstbornboys+=1                              # count females
+
+		
 print('The oldest age at which a person became a mother: ',firstmotherlist[-1])
 print('The youngest age at which a person became a mother: ',firstmotherlist[0])
 print('---------------')
 print('   ')
 #--------------
 
+
+
 #Question2 & 3
-fatherlist = list(fathers.keys())										#creating a list of all fathers
-for i in range(len(fatherlist)):										#iterating through the list of all fathers
-	kidlist =[]
-	kids_age =[]
-	kidlist = fathers[fatherlist[i]]									#adding all the children to one list
-	for j in range(len(kidlist)):										#iterating through all children
+										
+for i in range(len(fatherlist)):						 # iterating through the list of all fathers
+	
+	kidlist =[]                                                              # initializing kidlist for each father                                           
+	kids_age =[]                                                             # initialize kids_age for each father
+	kidlist = fathers[fatherlist[i]]				         # adding all the children to one list
+	
+	for j in range(len(kidlist)):					         #iterating through all children of this father
 		Ag_e = maindict[kidlist[j]]['Age']
-		kids_age.append(Ag_e)										#adding the age of every kid to a new list
-	kids_age.sort()
-	firstfatherlist.append(maindict[fatherlist[i]]['Age'] - kids_age[-1])					#finding when the father became a father for the first time and adding it to a list
+		kids_age.append(Ag_e)					         #adding the age of every kid to a new list
+	kids_age.sort()                                                          # sort list so that the firstborn will be last element
+	firstfatherlist.append(maindict[fatherlist[i]]['Age'] - kids_age[-1])	 #finding when the father became a father for the first time and adding it to a list
 print('Question 2 and 3')
 print(dividetogroups(firstfatherlist))
 print ('Average age at which a person became a father for the first time: ',averagefunc(firstfatherlist))
@@ -266,24 +297,27 @@ print('   ')
 #-------------------
 
 #question 8------------
-grandkids = dict()
-childlist = list(childict.keys())
 
-for g in range(len(childlist)):
-	mother = childict[childlist[g]][1]
-	father = childict[childlist[g]][0]
-	grandparents_m = []
-	grandparents_f = []
-	for i in range(len(childlist)):
+grandkids = dict()                                           # initialize dictionary for all grandkids
+childlist = list(childict.keys())                            # store all kids from childict into a list
+
+for g in range(len(childlist)):                              # iterate over all the kids
+	mother = childict[childlist[g]][1]                   # find kid's mother
+	father = childict[childlist[g]][0]                   # find kid's father
+	
+	grandparents_m = []                                  # initialize list for grandparents from mother's side
+	grandparents_f = []                                  # initialize list for grandparents from father's side
+	
+	for i in range(len(childlist)):                      # iterate again over all kids
 
 		if mother == childlist[i]:
-			grandparents_m = childict[childlist[i]]
+			grandparents_m = childict[childlist[i]]   # store the mother's parents
 		elif father == childlist[i]:
-			grandparents_f = childict[childlist[i]]
+			grandparents_f = childict[childlist[i]]   # store the father's parents
 
-	if grandparents_f!= [] or grandparents_m!= []:
+	if grandparents_f!= [] or grandparents_m!= []:            # exclude grandkids with no grandparents alive
 		
-		grandkids[childlist[g]] = grandparents_f+grandparents_m
+		grandkids[childlist[g]] = grandparents_f+grandparents_m   # create dict (grandkids) with keys: grandkids and values: grandparents
 
 
 print('Question 8')
@@ -297,41 +331,48 @@ print('   ')
 #--------------------
 # question 9
 
-cousins_m = 0
-siblings_M =list()
-cousinsdict = dict()
-siblist= list()
-for i in range(len(childlist)):
-	siblings_M = []
-	cousins_m = 0
-	cousins_f = 0
-	siblings_F = []
-	totcousins = 0
-	mother = childict[childlist[i]][1]
-	father = childict[childlist[i]][0]
-	for CPR in maindict:
-		if maindict[CPR]['Children'] is not None and cousins_m == 0 :
-			if mother in maindict[CPR]['Children']:
-				siblings_M = maindict[CPR]['Children']
-				for k in range(len(siblings_M)):
-					if maindict[siblings_M[k]]['Children'] is not None and siblings_M[k]!= mother:
-						cousins_m += len(maindict[siblings_M[k]]['Children'])
+cousinsdict = dict()                   # initialize dict for cousins
+siblist= list()                        # initialize list for siblings' groups
+
+for i in range(len(childlist)):        # iterate over all kids
 	
-	for CPR in maindict:
-		if maindict[CPR]['Children'] is not None and cousins_f == 0:
-			if father in maindict[CPR]['Children']:
-				siblings_F = maindict[CPR]['Children']
-				for v in range(len(siblings_F)):
-					if maindict[siblings_F[v]]['Children'] is not None and siblings_F[v]!= father:
-						cousins_f += len(maindict[siblings_F[v]]['Children'])
+	siblings_M = []                # initialize lists for cousins from mother's and father's side
+	siblings_F = []
+	
+	cousins_m = 0                  # initialize cousins' counters
+	cousins_f = 0
+	totcousins = 0
+	
+	mother = childict[childlist[i]][1]   #store kid's mother
+	father = childict[childlist[i]][0]   #store kid's father
+	
+	for CPR in maindict:          # iterate over every CPR entry                       
+		
+		if maindict[CPR]['Children'] is not None and cousins_m == 0 :     # Find people with kids
+			if mother in maindict[CPR]['Children']:                   # Find mother in an entry's children            
+				siblings_M = maindict[CPR]['Children']            # store mother with siblings in siblings_M
+				
+				for k in range(len(siblings_M)):                  # iterate over siblings
+					
+					if maindict[siblings_M[k]]['Children'] is not None and siblings_M[k]!= mother:    # find mothers' siblings that have kids
+						cousins_m += len(maindict[siblings_M[k]]['Children'])                     # append their kids in cousins_m
 
-	cousinsdict[childlist[i]] = (cousins_f+cousins_m)
+			if father in maindict[CPR]['Children']:                   # Find father in an entry's children     
+				siblings_F = maindict[CPR]['Children']            # store father with siblings in siblings_M
+				
+				for v in range(len(siblings_F)):                 # iterate over siblings
+					
+					if maindict[siblings_F[v]]['Children'] is not None and siblings_F[v]!= father:    # find fathers' siblings that have kids
+						cousins_f += len(maindict[siblings_F[v]]['Children'])                     # append their kids in cousins_f
 
-cousinslistclear = []
-cousinslist = list(cousinsdict.values())
-for i in range (len(cousinslist)):
+	cousinsdict[childlist[i]] = (cousins_f+cousins_m)          # create cousindict with keys: every child, and values: the number of cousins 
+
+cousinslistclear = []                                              # initialize list for number of cousins
+cousinslist = list(cousinsdict.values())                           # store values of cousinsdict in cousins list
+
+for i in range (len(cousinslist)):                                 # get rid of people with 0 cousins
 	if cousinslist[i] != 0:
-		cousinslistclear.append(cousinslist[i])
+		cousinslistclear.append(cousinslist[i])            # create a list with people with at leat one cousin
 
 
 
@@ -342,35 +383,6 @@ print('Average number of cousins: ',averagefunc(cousinslistclear), '\n')
 
 
 #---------------------------
-
-# question 10:
-
-
-firstbornboys = 0
-firstborngirls = 0
-
-for t in range(len(motherlist)):                                 # iterating over all of the women with children
-	kidsage = []                                                 # initializing
-	kidsagedict = dict()                            
-	eldest_kids = []
-	kidlist = mothers[motherlist[t]]                             # appending each mother's kids in  list
-	keysSortedbyAge = []
-
-	for j in range(len(kidlist)):                
-		Age_ = maindict[kidlist[j]]['Age']                       # storing each kid's age in a dict (key: CPR of kid, value: age)
-		kidsagedict[kidlist[j]] = Age_ 
-	keysSortedbyAge = sorted(kidsagedict.keys(), key= kidsagedict.get)                       
-	for i in range(len(keysSortedbyAge)):
-		if kidsagedict[keysSortedbyAge[i]] == kidsagedict[keysSortedbyAge[-1]]:   #checking for twins
-			eldest_kids.append(keysSortedbyAge[i])
-	
-	for k in range(len(eldest_kids)):
-		if int(eldest_kids[k][-1])%2 == 0:                        # identify if the first born is male or female
-			firstborngirls+=1                             # count males
-		else: 
-			firstbornboys+=1                              # count females
-				                                     
-
 
 print('Question 10')
 print ('The likelihood of the fistborn being a male is', (firstbornboys/(firstborngirls+firstbornboys))*100, '%') 
@@ -384,25 +396,25 @@ multiplepartners = 0                                                # initialize
 parents = list(childict.values())                                   # store all pairs of parents in a list
 parents.sort()
 multiplepartners_m = 0
-multiplepartners_f = 0                                                    # sort list (pairs with the same father will be next to each other)
+multiplepartners_f = 0                                              # sort list (pairs with the same father will be next to each other)
 for p in range (len(parents)):
 	if p != len(parents)-1:
 		if parents[p][0] == parents[p+1][0] and parents[p][1]!= parents[p+1][1]:
 			
 	
 
-			multiplepartners_m += 1                           # count men with multiple partners
+			multiplepartners_m += 1                      # count men with multiple partners
 	
-	(parents[p]).reverse()		                            # reverse the order of parents (first element: mother, second element: father)
+	(parents[p]).reverse()		                             # reverse the order of parents (first element: mother, second element: father)
 
 parents.sort()
 for p in range(len(parents)):
 	if p != len(parents)-1:
 		if parents[p][0] == parents[p+1][0] and parents[p][1]!= parents[p+1][1]:
 
-			multiplepartners_f += 1                        # count women with multiple partners
+			multiplepartners_f += 1                       # count women with multiple partners
 
-multiplepartners = multiplepartners_f + multiplepartners_m
+multiplepartners = multiplepartners_f + multiplepartners_m            # add men and women having multiple partners
 
 print('Question 11')
 print ("The percentage of people who have kids with more than one partner is ", (multiplepartners / (2*len(parents)))*100, '%', '\n')
@@ -410,11 +422,12 @@ print ("The percentage of people who have kids with more than one partner is ", 
 #---------------------------
 
 
-# question 12:
-avr_w_height = summed_w_height / females
-avr_m_height = summed_m_height / males
 
-ttcouples = 0
+# question 12:
+avr_w_height = summed_w_height / females                               # calculate average womens' height
+avr_m_height = summed_m_height / males                                 # calculate average mens' height
+
+ttcouples = 0                                                          # initialize couples' counters for height categories
 sscouples = 0
 nncouples = 0
 sncouples = 0
@@ -422,12 +435,17 @@ tscouples = 0
 tncouples = 0 
 
 
-tallparents = []
+tallparents = []                                                      # initialize list for tall parents
 
+
+
+# If statements to count how many couples belong to each of the categories initialized above: 
 for y in range (len(uniqueparentspairs)):
+	
 	if int(maindict[uniqueparentspairs[y][0]]['Height']) > (avr_w_height + avr_w_height*0.025) and int(maindict[uniqueparentspairs[y][1]]['Height']) > (avr_m_height + avr_m_height*0.025):
 		ttcouples+=1
 		tallparents.append(uniqueparentspairs[y])                              #store CPRs of tall parent pairs for q13
+	
 	elif int(maindict[uniqueparentspairs[y][0]]['Height']) < (avr_w_height - avr_w_height*0.025) and int(maindict[uniqueparentspairs[y][1]]['Height']) < (avr_m_height - avr_m_height*0.025):
 		sscouples+=1
 	elif int(maindict[uniqueparentspairs[y][0]]['Height']) <= (avr_w_height + avr_w_height*0.025) and int(maindict[uniqueparentspairs[y][0]]['Height']) >= (avr_w_height - avr_w_height*0.025) and int(maindict[uniqueparentspairs[y][1]]['Height']) <= (avr_m_height + avr_m_height*0.025) and int(maindict[uniqueparentspairs[y][1]]['Height']) >= (avr_m_height - avr_m_height*0.025):
@@ -447,14 +465,15 @@ print('The percentage of couples consisting of two tall people is', ttcouples/le
 
 
 # question 13:
-kidsoftallparents = 0
-tallkids = 0
-total_kidsoftt=0
+
+     
+tallkids = 0                 #initialize counter for tall kids 
+kidsoftt = 0                 #initialize counter for kids of tall parents
 
 dict_items=childict.items()
 for j in range (len(tallparents)):
 	kids= [k for k, v in childict.items() if v == tallparents[j]]
-	total_kidsoftt+= len(kids)
+	kidsoftt+= len(kids)
 	for g in range (len(kids)):
 		if int(kids[g][-1]) % 2 == 0 and int(maindict[kids[g]]['Height']) > (avr_w_height + avr_w_height*0.025):
 			tallkids+=1
@@ -463,22 +482,14 @@ for j in range (len(tallparents)):
 		
 
 print('Question 13')
-print ('The percentage of kids of tall parents that are tall is', (tallkids/total_kidsoftt)*100, '%.', '\n')
+print ('The percentage of kids of tall parents that are tall is', (tallkids/kidsoftt)*100, '%.', '\n')
 
 #---------------------------
 
 
 # question 14:
-'''
-BMI = kg/m2
-If your BMI is less than 18.5, it falls within the underweight range.
-If your BMI is 18.5 to 24.9, it falls within the normal or Healthy Weight range.
-If your BMI is 25.0 to 29.9, it falls within the overweight range.
-If your BMI is 30.0 or higher, it 
-falls within the obese range.
-'''
 
-f_f_couples =0
+f_f_couples =0                         # initialize couples' counters for weight categories
 sl_sl_couples = 0
 f_sl_couples = 0
 n_n_couples = 0
@@ -486,18 +497,19 @@ f_n_couples = 0
 sl_f_couples = 0
 
 
+# If statements to count how many couples belong to each of the categories initialized above
 for n in range (len(uniqueparentspairs)):
 	if int(maindict[uniqueparentspairs[n][0]]['BMI']) > 24.9 and int(maindict[uniqueparentspairs[n][1]]['BMI']) > 24.9 :
 		f_f_couples+=1
-	if int(maindict[uniqueparentspairs[n][0]]['BMI']) < 18.5 and int(maindict[uniqueparentspairs[n][1]]['BMI']) < 18.5 :
+	elif int(maindict[uniqueparentspairs[n][0]]['BMI']) < 18.5 and int(maindict[uniqueparentspairs[n][1]]['BMI']) < 18.5 :
 		sl_sl_couples+=1
-	if (int(maindict[uniqueparentspairs[n][0]]['BMI']) > 24.9 and int(maindict[uniqueparentspairs[n][1]]['BMI']) < 18.5) or (int(maindict[uniqueparentspairs[n][0]]['BMI']) < 18.5 and int(maindict[uniqueparentspairs[n][1]]['BMI']) > 24.9) :
+	elif (int(maindict[uniqueparentspairs[n][0]]['BMI']) > 24.9 and int(maindict[uniqueparentspairs[n][1]]['BMI']) < 18.5) or (int(maindict[uniqueparentspairs[n][0]]['BMI']) < 18.5 and int(maindict[uniqueparentspairs[n][1]]['BMI']) > 24.9) :
 		f_sl_couples+=1
-	if (int(maindict[uniqueparentspairs[n][0]]['BMI']) <= 24.9 and int(maindict[uniqueparentspairs[n][0]]['BMI'])>= 18.5) and (int(maindict[uniqueparentspairs[n][1]]['BMI']) <= 24.9 and int(maindict[uniqueparentspairs[n][1]]['BMI'])>= 18.5) :
+	elif (int(maindict[uniqueparentspairs[n][0]]['BMI']) <= 24.9 and int(maindict[uniqueparentspairs[n][0]]['BMI'])>= 18.5) and (int(maindict[uniqueparentspairs[n][1]]['BMI']) <= 24.9 and int(maindict[uniqueparentspairs[n][1]]['BMI'])>= 18.5) :
 		n_n_couples+=1
-	if ((int(maindict[uniqueparentspairs[n][0]]['BMI']) <= 24.9 and int(maindict[uniqueparentspairs[n][0]]['BMI'])>= 18.5) and int(maindict[uniqueparentspairs[n][1]]['BMI']) > 24.9) or ((int(maindict[uniqueparentspairs[n][1]]['BMI']) <= 24.9 and int(maindict[uniqueparentspairs[n][1]]['BMI'])>= 18.5) and int(maindict[uniqueparentspairs[n][0]]['BMI']) > 24.9):
+	elif ((int(maindict[uniqueparentspairs[n][0]]['BMI']) <= 24.9 and int(maindict[uniqueparentspairs[n][0]]['BMI'])>= 18.5) and int(maindict[uniqueparentspairs[n][1]]['BMI']) > 24.9) or ((int(maindict[uniqueparentspairs[n][1]]['BMI']) <= 24.9 and int(maindict[uniqueparentspairs[n][1]]['BMI'])>= 18.5) and int(maindict[uniqueparentspairs[n][0]]['BMI']) > 24.9):
 		f_n_couples+=1
-	if ((int(maindict[uniqueparentspairs[n][0]]['BMI']) <= 24.9 and int(maindict[uniqueparentspairs[n][0]]['BMI'])>= 18.5) and int(maindict[uniqueparentspairs[n][1]]['BMI']) < 18.5) or ((int(maindict[uniqueparentspairs[n][1]]['BMI']) <= 24.9 and int(maindict[uniqueparentspairs[n][1]]['BMI'])>= 18.5) and int(maindict[uniqueparentspairs[n][0]]['BMI']) < 18.5):
+	elif ((int(maindict[uniqueparentspairs[n][0]]['BMI']) <= 24.9 and int(maindict[uniqueparentspairs[n][0]]['BMI'])>= 18.5) and int(maindict[uniqueparentspairs[n][1]]['BMI']) < 18.5) or ((int(maindict[uniqueparentspairs[n][1]]['BMI']) <= 24.9 and int(maindict[uniqueparentspairs[n][1]]['BMI'])>= 18.5) and int(maindict[uniqueparentspairs[n][0]]['BMI']) < 18.5):
 		sl_f_couples+=1
 
 print('Question 14')
@@ -506,21 +518,34 @@ print('The percentage of couples consisting of two fat people is', f_f_couples/l
 
 
 #question15
-adopted = list()
-for i in range (len(childlist)):
-	fathersblood= maindict[childict[childlist[i]][1]]['Bloodtype']
-	
-	mothersblood = maindict[childict[childlist[i]][0]]['Bloodtype']
 
-	childsblood = maindict[childlist[i]]['Bloodtype']
-	if mothersblood[-1] == '+' and fathersblood[-1] == '+':
+adopted = list()                            #initialize list for kids with non biological parents
+
+for i in range (len(childlist)):
+	
+	fathersblood= maindict[childict[childlist[i]][1]]['Bloodtype']        # store father's blood in variable
+	
+	mothersblood = maindict[childict[childlist[i]][0]]['Bloodtype']       # store mother's blood in variable
+
+	childsblood = maindict[childlist[i]]['Bloodtype']                     # store child's blood in variable
+	
+	
+	
+	if mothersblood[-1] == '+' and fathersblood[-1] == '+':              # Rhesus check:
 		if childsblood[-1] ==  '-':
 			adopted.append(childlist[i])
 	elif mothersblood[-1] == '-' and fathersblood[-1] == '-':
 		if childsblood[-1] ==  '+':
 			adopted.append(childlist[i])
-	else:
-		if mothersblood[:-1] == 'A' and fathersblood[:-1] == 'A':
+	
+	
+	
+	else:                                                              # if the blood types comply with the Rhesus inheritance, then ABO type is checked
+
+
+	#If statements to detect children with blood type that can not have been inherited from their parents:
+		
+	if mothersblood[:-1] == 'A' and fathersblood[:-1] == 'A':
 			if childsblood[:-1]!= 'A' and childsblood[:-1]!= 'O':
 				adopted.append(childlist[i])
 
@@ -565,17 +590,21 @@ print(adopted, '\n')
 
 
 #question16
-f_cbloodict = dict()
-for i in range(len(fatherlist)):
-	fathersblood = maindict[fatherlist[i]]['Bloodtype']
-	fathers_children = fathers[fatherlist[i]]
-	f_cbloodlist = []
+
+f_cbloodict = dict()                                         # initialize dictionary with fathers hou can donate to sons ande their blood types
+ 
+for i in range(len(fatherlist)):                             # iterate through all fathers
+	fathersblood = maindict[fatherlist[i]]['Bloodtype']  
+	fathers_children = fathers[fatherlist[i]]            # append father's children into list
+	f_cbloodlist = []                                    # list with the sons that receive blood and their blood type
+	
 	for j in range(len(fathers_children)):
 	
-		if int(fathers_children[j][-1])%2 != 0:
+		if int(fathers_children[j][-1])%2 != 0:                              # exclude daughters
 
-			childsblood = maindict[fathers_children[j]]['Bloodtype']
+			childsblood = maindict[fathers_children[j]]['Bloodtype']     # identify its son's bloodtype
 
+			#If statements to detect sons that can receive blood from their father and append themselves and their bloodtype into f_cbloodlist :
 			if childsblood == fathersblood:
 				f_cbloodlist.append(fathers_children[j]+' '+childsblood)
 
@@ -594,23 +623,25 @@ for i in range(len(fatherlist)):
 			elif fathersblood == 'A-' and (childsblood == 'AB-' or childsblood == 'A+'):
 				f_cbloodlist.append(fathers_children[j]+' '+childsblood)
 
-	if f_cbloodlist != []:
-		f_cbloodict[fatherlist[i]+' '+fathersblood] = f_cbloodlist
+	if f_cbloodlist != []:                                                                  # exclude cases where sons cannot receive blood form father
+		f_cbloodict[fatherlist[i]+' '+fathersblood] = f_cbloodlist                      # create f_cbloodict
 
 print('Question 16')
 print('Fathers that can donate blood to atleast one of their sons: ',len(f_cbloodict.keys()))
-f_cbloodkeylist = list(f_cbloodict.keys())
-fs_counter = 0
+
+f_cbloodkeylist = list(f_cbloodict.keys())                                                     # store keys from f_cbloodict in list
+sonscounter = 0                                                                                # initialize counter for compatible sons
+
 for i in range(len(f_cbloodkeylist)):
 	sons = f_cbloodict[f_cbloodkeylist[i]]
-	fs_counter += len(sons)
-print('Sons that can receive blood from their father: ', fs_counter, '\n')
+	sonscounter += len(sons)                                                              # calculate sum of compatible sons
+print('Sons that can receive blood from their father: ', sonscounter, '\n')
 
 #---------------------
 
 
 #question17
-gc_gpbloodict = dict()
+gc_gpbloodict = dict()                                   #dict for grankids who grantparent
 grandkids_list = list(grandkids.keys())
 
 for i in range(len(grandkids_list)):
