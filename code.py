@@ -3,9 +3,22 @@
 
 import re
 
-maindict = dict()                                                                    # initialize main data structure
+(result,lastdigit, females, males, ages, counts, groups, agerangedict,agegrangeperc, genderdict) = (None, "", 0,0, [], [], [], dict(),dict(),dict())
 
-infile = open('people.db', "r")                                                      # open input file
+(seqflag, datalist) = (False, [])                                                  # Initialize
+
+datalistclear = []
+childrenCPRlist = []
+father1timelist = []
+mother1timelist = []
+people = 0
+parents = 0
+
+age_dict= dict()
+parent_child_dict=dict()
+maindict = dict()
+
+infile = open('people.db', "r")                                                   # open input file
 flag = False
 flag2 = False
 for line in infile: 
@@ -121,8 +134,6 @@ nc_women = 0
 CPRlist = list(maindict.keys())                                                # store all CPRs in a list (CPRlist)              
 summed_w_height =0
 summed_m_height=0
-lastdigit = ''
-(females, males) = (0,0)
 
 
 for i in range(len(CPRlist)):
@@ -184,31 +195,31 @@ fatherlist = list(fathers.keys())
 for i in range(len(fatherlist)):          #iterating through CPR numbers of all fathers                                   
 	kidlist = []
 	kids_age = []
-	kidlist = fathers[fatherlist[i]]  #
-	
-	for j in range (len(kidlist)):
-		for k,v in mothers.items():
+	kidlist = fathers[fatherlist[i]]  #taking the children each father has and adding it to a temporary list
+	 
+	for j in range (len(kidlist)):            #iterating through each fathers children
+		for k,v in mothers.items():       #checking if the child is present in the values(children) of the mothers dict
 			if kidlist[j] in v:
-				childict[kidlist[j]] = [fatherlist[i], k]
+				childict[kidlist[j]] = [fatherlist[i], k]      #creating a new dict with child as key and the father and mother as values
 #-------------
 
 
 #question7------
-ChildCPR_sortlist = sorted(childict.keys(), key=childict.get)                  
+ChildCPR_sortlist = sorted(childict.keys(), key=childict.get)                 # storing all children from childrens dict into a list based on sorted values 
 kids_age = list()
 parent_agediff = list()
 uniqueparentspairs= list()
 
-for i in range(len(ChildCPR_sortlist)):                                     
+for i in range(len(ChildCPR_sortlist)):                                      # iterating though the list of children              
 	if i != len(ChildCPR_sortlist)-1:
-		if childict[ChildCPR_sortlist[i]] != childict[ChildCPR_sortlist[i+1]]:
+		if childict[ChildCPR_sortlist[i]] != childict[ChildCPR_sortlist[i+1]]:                      #checking if children are not siblings
 			father = childict[ChildCPR_sortlist[i]][0]
 			mother = childict[ChildCPR_sortlist[i]][1]
-			parent_agediff.append(abs(maindict[father]['Age'] - maindict[mother]['Age']))
+			parent_agediff.append(abs(maindict[father]['Age'] - maindict[mother]['Age']))       #creating a list with age difference between parents
 			uniqueparentspairs.append(childict[ChildCPR_sortlist[i]])                           # make a list of unique pairs of parents for q12
 		
 
-	else:
+	else:           										   #creating a seperate condition to look at the last childs parents
 		mother = childict[ChildCPR_sortlist[i]][1]
 		father = childict[ChildCPR_sortlist[i]][0]
 		parent_agediff.append(abs(maindict[father]['Age'] - maindict[mother]['Age']))
@@ -221,15 +232,15 @@ print('   ')
 #--------------
 
 #Question 4 & 5
-motherlist = list(mothers.keys())
-kids_age = list()
+motherlist = list(mothers.keys())					#creating a list of all mothers
+kids_age = list()							
 kidlist = list()
 firstmotherlist = list()
-for i in range(len(motherlist)):
+for i in range(len(motherlist)):					#iterating through all mothers
 	kidlist =[]
 	kids_age =[]
-	kidlist = mothers[motherlist[i]]
-	for j in range(len(kidlist)):
+	kidlist = mothers[motherlist[i]]				#storing each mothers children in temporary list
+	for j in range(len(kidlist)):					#
 		Ag_e = maindict[kidlist[j]]['Age']
 		kids_age.append(Ag_e)
 	kids_age.sort()
